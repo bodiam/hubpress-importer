@@ -1,5 +1,6 @@
 package nl.jworks.wordpress.importer
 
+import org.junit.Ignore
 import org.junit.Test
 
 /**
@@ -7,7 +8,7 @@ import org.junit.Test
  */
 class WordpressImporterTest {
 
-    @Test
+    @Ignore
     public void countPosts() {
         def wordpressImporter = new WordpressImporter()
 

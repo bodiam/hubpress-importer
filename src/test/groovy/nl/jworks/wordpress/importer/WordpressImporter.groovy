@@ -18,12 +18,18 @@ class WordpressImporter {
             def htmlContent = item.'content:encoded'
 
             new Post(
-                    title:item.title,
+                    title:item.title.text(),
                     content:new HtmlToAsciiDocConverter().convert(htmlContent.text())
             )
         }
 
         postCount = posts.size()
+
+        new File("posts").mkdir()
+
+        posts.each { post ->
+            new File("posts/"+post.title+".adoc") << post.content
+        }
 
     }
 }
