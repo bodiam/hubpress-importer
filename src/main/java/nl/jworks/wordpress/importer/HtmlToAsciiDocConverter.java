@@ -80,6 +80,9 @@ class AsciiDocTagVisitor implements TagVisitor {
                 case "em":
                     buffer += "_";
                     break;
+                case "del":
+                    buffer += "[line-through]#";
+                    break;
                 case "blockquote":
                     buffer += "____\n";
                     break;
@@ -134,6 +137,9 @@ class AsciiDocTagVisitor implements TagVisitor {
                 case "i":
                 case "em":
                     buffer += "_";
+                    break;
+                case "del":
+                    buffer += "#";
                     break;
                 case "blockquote":
                     buffer += "\n____\n";

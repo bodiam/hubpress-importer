@@ -69,6 +69,11 @@ class HtmlToAsciiDocConverterTest {
     }
 
     @Test
+    public void del() {
+        assert "[line-through]#striked#" == converter.convert("<del>striked</del>")
+    }
+
+    @Test
     void testBasicConvert() {
 
         def html = """<html><body><h1>hello world</h1><p>some text</p><img src="http://myimage.com/pic.gif"></body></html>"""
