@@ -15,7 +15,7 @@ class HtmlToAsciiDocConverter {
     public String convert(String htmlContent) {
 
         LagartoParser lagartoParser = new LagartoParser(htmlContent, false);
-        FooTagVisitor tagVisitor = new FooTagVisitor();
+        AsciiDocTagVisitor tagVisitor = new AsciiDocTagVisitor();
         lagartoParser.parse(tagVisitor);
 
         return tagVisitor.getBuffer();
@@ -23,9 +23,10 @@ class HtmlToAsciiDocConverter {
 }
 
 
-class FooTagVisitor implements TagVisitor {
+class AsciiDocTagVisitor implements TagVisitor {
 
     private String buffer = "";
+    private String listToken = "";
 
     public String getBuffer() {
         return buffer;
@@ -56,6 +57,20 @@ class FooTagVisitor implements TagVisitor {
                 case "h1":
                     buffer += "= ";
                     break;
+                case "h2":
+                    buffer += "== ";
+                    break;
+                case "h3":
+                    buffer += "=== ";
+                    break;
+                case "b":
+                case "strong":
+                    buffer += "*";
+                    break;
+                case "i":
+                case "em":
+                    buffer += "_";
+                    break;
                 case "p":
                     buffer += "\n";
                     break;
@@ -80,6 +95,15 @@ class FooTagVisitor implements TagVisitor {
                 case "a":
                     buffer += tag.getAttributeValue("href") + "[";
                     break;
+                case "ol":
+                    listToken = "1.";
+                    break;
+                case "ul":
+                    listToken = "*";
+                    break;
+                case "li":
+                    buffer += listToken + " ";
+                    break;
                 default:
                     System.err.println("DONT KNOW HOW TO HANDLE " + tag);
             }
@@ -91,6 +115,14 @@ class FooTagVisitor implements TagVisitor {
                 case "code":
                     buffer += "`";
                     break;
+                case "b":
+                case "strong":
+                    buffer += "*";
+                    break;
+                case "i":
+                case "em":
+                    buffer += "_";
+                    break;
                 case "a":
                     buffer += "]";
                     break;
@@ -98,8 +130,18 @@ class FooTagVisitor implements TagVisitor {
                     buffer += "\n----\n";
                     break;
                 case "h1":
+                case "h2":
+                case "h3":
                     buffer += "\n";
                     break;
+                case "ol":
+                case "ul":
+                    listToken = "";
+                    break;
+                case "li":
+                    buffer += "\n";
+                    break;
+
             }
         }
     }
