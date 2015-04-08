@@ -63,6 +63,15 @@ class AsciiDocTagVisitor implements TagVisitor {
                 case "h3":
                     buffer += "=== ";
                     break;
+                case "h4":
+                    buffer += "==== ";
+                    break;
+                case "h5":
+                    buffer += "===== ";
+                    break;
+                case "h6":
+                    buffer += "====== ";
+                    break;
                 case "b":
                 case "strong":
                     buffer += "*";
@@ -70,6 +79,9 @@ class AsciiDocTagVisitor implements TagVisitor {
                 case "i":
                 case "em":
                     buffer += "_";
+                    break;
+                case "blockquote":
+                    buffer += "____\n";
                     break;
                 case "p":
                     buffer += "\n";
@@ -123,6 +135,9 @@ class AsciiDocTagVisitor implements TagVisitor {
                 case "em":
                     buffer += "_";
                     break;
+                case "blockquote":
+                    buffer += "\n____\n";
+                    break;
                 case "a":
                     buffer += "]";
                     break;
@@ -132,6 +147,9 @@ class AsciiDocTagVisitor implements TagVisitor {
                 case "h1":
                 case "h2":
                 case "h3":
+                case "h4":
+                case "h5":
+                case "h6":
                     buffer += "\n";
                     break;
                 case "ol":

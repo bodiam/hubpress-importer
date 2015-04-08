@@ -27,6 +27,21 @@ class HtmlToAsciiDocConverterTest {
     }
 
     @Test
+    public void testConvertH4() {
+        assert "==== Title\n" == converter.convert("<h4>Title</h4>")
+    }
+
+    @Test
+    public void testConvertH5() {
+        assert "===== Title\n" == converter.convert("<h5>Title</h5>")
+    }
+
+    @Test
+    public void testConvertH6() {
+        assert "====== Title\n" == converter.convert("<h6>Title</h6>")
+    }
+
+    @Test
     public void testConvertStrong() {
         assert "*Strong*" == converter.convert("<b>Strong</b>")
         assert "*Strong*" == converter.convert("<strong>Strong</strong>")
@@ -46,6 +61,11 @@ class HtmlToAsciiDocConverterTest {
     @Test
     public void unorderedList() {
         assert "* Item 1\n* Item 2\n" == converter.convert("<ul><li>Item 1</li><li>Item 2</li></ul>")
+    }
+
+    @Test
+    public void blockquote() {
+        assert "____\nmy awesome quote\n____\n" == converter.convert("<blockquote>my awesome quote</blockquote>")
     }
 
     @Test
