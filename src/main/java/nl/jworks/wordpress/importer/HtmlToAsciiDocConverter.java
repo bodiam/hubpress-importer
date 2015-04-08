@@ -185,7 +185,7 @@ class AsciiDocTagVisitor implements TagVisitor {
     public void text(CharSequence text) {
         System.out.println("text: " + text);
 
-        buffer += text;
+        buffer += text.toString().trim();
     }
 
     @Override
