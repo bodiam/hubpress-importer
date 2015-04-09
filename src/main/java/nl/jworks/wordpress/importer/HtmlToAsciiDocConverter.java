@@ -18,18 +18,18 @@ class HtmlToAsciiDocConverter {
         AsciiDocTagVisitor tagVisitor = new AsciiDocTagVisitor();
         lagartoParser.parse(tagVisitor);
 
-        return tagVisitor.getBuffer();
+        return tagVisitor.getResult();
     }
 }
 
 
 class AsciiDocTagVisitor implements TagVisitor {
 
-    private String buffer = "";
+    private StringBuilder buffer = new StringBuilder();
     private String listToken = "";
 
-    public String getBuffer() {
-        return buffer;
+    public String getResult() {
+        return buffer.toString();
     }
 
     @Override
@@ -55,60 +55,63 @@ class AsciiDocTagVisitor implements TagVisitor {
         if (tag.getType().isStartingTag()) {
             switch (tag.getName().toString().toLowerCase()) {
                 case "h1":
-                    buffer += "= ";
+                    buffer.append("= ");
                     break;
                 case "h2":
-                    buffer += "== ";
+                    buffer.append("== ");
                     break;
                 case "h3":
-                    buffer += "=== ";
+                    buffer.append("=== ");
                     break;
                 case "h4":
-                    buffer += "==== ";
+                    buffer.append("==== ");
                     break;
                 case "h5":
-                    buffer += "===== ";
+                    buffer.append("===== ");
                     break;
                 case "h6":
-                    buffer += "====== ";
+                    buffer.append("====== ");
                     break;
                 case "b":
                 case "strong":
-                    buffer += "*";
+                    buffer.append("*");
                     break;
                 case "i":
                 case "em":
-                    buffer += "_";
+                    buffer.append("_");
                     break;
                 case "del":
-                    buffer += "[line-through]#";
+                    buffer.append("[line-through]#");
                     break;
                 case "blockquote":
-                    buffer += "____\n";
+                    buffer.append("____\n");
                     break;
                 case "p":
-                    buffer += "\n";
+                    buffer.append("\n");
                     break;
                 case "img":
-                    buffer += "\nimage::" + tag.getAttributeValue("src") + "[]";
+                    buffer.append("\nimage::").append(tag.getAttributeValue("src")).append("[]");
                     break;
                 case "code":
-                    buffer += "`";
+                    buffer.append("`");
                     break;
                 case "pre":
                     String source = "";
 
-                    Pattern p = Pattern.compile("\"brush:([a-z]*)");
-                    Matcher m = p.matcher("\"brush:java");
+                    CharSequence attributeValue = tag.getAttributeValue("class");
+                    if(attributeValue != null) {
+                        Pattern p = Pattern.compile("\"brush:([a-z]*)");
+                        Matcher m = p.matcher(attributeValue);
 
-                    if(m.find()) {
-                        source = "," +m.group(1);
+                        if (m.find()) {
+                            source = "," + m.group(1);
+                        }
                     }
 
-                    buffer += "[source"+source+"]\n----\n";
+                    buffer.append("[source").append(source).append("]\n----\n");
                     break;
                 case "a":
-                    buffer += tag.getAttributeValue("href") + "[";
+                    buffer.append(tag.getAttributeValue("href")).append("[");
                     break;
                 case "ol":
                     listToken = "1.";
@@ -117,7 +120,7 @@ class AsciiDocTagVisitor implements TagVisitor {
                     listToken = "*";
                     break;
                 case "li":
-                    buffer += listToken + " ";
+                    buffer.append(listToken).append(" ");
                     break;
                 default:
                     System.err.println("DONT KNOW HOW TO HANDLE " + tag);
@@ -125,30 +128,30 @@ class AsciiDocTagVisitor implements TagVisitor {
         } else {
             switch (tag.getName().toString().toLowerCase()) {
                 case "p":
-                    buffer += "\n";
+                    buffer.append("\n");
                     break;
                 case "code":
-                    buffer += "`";
+                    buffer.append("`");
                     break;
                 case "b":
                 case "strong":
-                    buffer += "*";
+                    buffer.append("*");
                     break;
                 case "i":
                 case "em":
-                    buffer += "_";
+                    buffer.append("_");
                     break;
                 case "del":
-                    buffer += "#";
+                    buffer.append("#");
                     break;
                 case "blockquote":
-                    buffer += "\n____\n";
+                    buffer.append("\n____\n");
                     break;
                 case "a":
-                    buffer += "]";
+                    buffer.append("]");
                     break;
                 case "pre":
-                    buffer += "\n----\n";
+                    buffer.append("\n----\n");
                     break;
                 case "h1":
                 case "h2":
@@ -156,14 +159,14 @@ class AsciiDocTagVisitor implements TagVisitor {
                 case "h4":
                 case "h5":
                 case "h6":
-                    buffer += "\n";
+                    buffer.append("\n");
                     break;
                 case "ol":
                 case "ul":
                     listToken = "";
                     break;
                 case "li":
-                    buffer += "\n";
+                    buffer.append("\n");
                     break;
 
             }
@@ -185,7 +188,7 @@ class AsciiDocTagVisitor implements TagVisitor {
     public void text(CharSequence text) {
         System.out.println("text: " + text);
 
-        buffer += text.toString().trim();
+        buffer.append(text);
     }
 
     @Override

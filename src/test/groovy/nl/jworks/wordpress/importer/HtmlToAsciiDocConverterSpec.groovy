@@ -1,6 +1,5 @@
 package nl.jworks.wordpress.importer
 
-import org.junit.Test
 import spock.lang.Ignore
 
 /**
@@ -49,6 +48,27 @@ class HtmlToAsciiDocConverterSpec extends spock.lang.Specification {
     }
 
 
+    @Ignore
+    def "test bugs"() {
+        expect:
+        converter.convert(html) == asciidoc
+
+        where:
+        html                                                                    | asciidoc
+        "'<a href=\"http://docs.python-requests.org/en/latest/\">requests</a>'" | "" // doesn't render the link because of ' around the link
+    }
+
+    def "spacing bug"() {
+        expect:
+        converter.convert(html) == asciidoc
+
+        where:
+        html                                                                                   | asciidoc
+        "Some time ago, I bought a <a href=\"http://www.leapmotion.com\">Leapmotion</a> and a" | "Some time ago, I bought a http://www.leapmotion.com[Leapmotion] and a" // doesn't render the link because of ' around the link
+    }
+
+
+    @Ignore
     def "basic scenario"() {
         when:
         def html = """<html>
