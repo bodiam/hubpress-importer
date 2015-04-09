@@ -1,0 +1,3 @@
+= hubpress-importer
+
+Imports Wordpress exports into hubpress
