@@ -58,7 +58,7 @@ class HtmlToAsciiDocConverterSpec extends spock.lang.Specification {
         "'<a href=\"http://docs.python-requests.org/en/latest/\">requests</a>'" | "" // doesn't render the link because of ' around the link
     }
 
-    def "spacing bug"() {
+    def "spacing"() {
         expect:
         converter.convert(html) == asciidoc
 
@@ -67,6 +67,28 @@ class HtmlToAsciiDocConverterSpec extends spock.lang.Specification {
         "Some time ago, I bought a <a href=\"http://www.leapmotion.com\">Leapmotion</a> and a" | "Some time ago, I bought a http://www.leapmotion.com[Leapmotion] and a" // doesn't render the link because of ' around the link
     }
 
+    def "xml conversion"() {
+        when:
+        def html = """<pre class="brush: xml">
+<plugin>
+  <groupId>org.jacoco</groupId>
+  <artifactId>jacoco-maven-plugin</artifactId>
+  <version>0.6.3.201306030806</version>
+</plugin>
+</pre>""".stripMargin()
+
+        def asciidoc = converter.convert(html)
+
+        then:
+        asciidoc == """[source,xml]
+----
+<plugin>
+  <groupId>org.jacoco</groupId>
+  <artifactId>jacoco-maven-plugin</artifactId>
+  <version>0.6.3.201306030806</version>
+</plugin>
+----""".stripMargin()
+    }
 
     @Ignore
     def "basic scenario"() {

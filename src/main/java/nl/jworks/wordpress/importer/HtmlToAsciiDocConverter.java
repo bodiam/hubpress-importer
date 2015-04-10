@@ -26,6 +26,8 @@ class HtmlToAsciiDocConverter {
 class AsciiDocTagVisitor implements TagVisitor {
 
     private StringBuilder buffer = new StringBuilder();
+
+    private boolean processTokens = true;
     private String listToken = "";
 
     public String getResult() {
@@ -52,7 +54,7 @@ class AsciiDocTagVisitor implements TagVisitor {
     public void tag(Tag tag) {
         System.out.println("tag: " + tag);
 
-        if (tag.getType().isStartingTag()) {
+        if (tag.getType().isStartingTag() && processTokens) {
             switch (tag.getName().toString().toLowerCase()) {
                 case "h1":
                     buffer.append("= ");
@@ -99,14 +101,17 @@ class AsciiDocTagVisitor implements TagVisitor {
                     String source = "";
 
                     CharSequence attributeValue = tag.getAttributeValue("class");
-                    if(attributeValue != null) {
-                        Pattern p = Pattern.compile("\"brush:([a-z]*)");
+                    if (attributeValue != null) {
+                        Pattern p = Pattern.compile("brush:\\s?([a-z]+)");
                         Matcher m = p.matcher(attributeValue);
 
                         if (m.find()) {
                             source = "," + m.group(1);
                         }
                     }
+
+                    processTokens = false;
+
 
                     buffer.append("[source").append(source).append("]\n----\n");
                     break;
@@ -126,49 +131,57 @@ class AsciiDocTagVisitor implements TagVisitor {
                     System.err.println("DONT KNOW HOW TO HANDLE " + tag);
             }
         } else {
-            switch (tag.getName().toString().toLowerCase()) {
-                case "p":
-                    buffer.append("\n");
-                    break;
-                case "code":
-                    buffer.append("`");
-                    break;
-                case "b":
-                case "strong":
-                    buffer.append("*");
-                    break;
-                case "i":
-                case "em":
-                    buffer.append("_");
-                    break;
-                case "del":
-                    buffer.append("#");
-                    break;
-                case "blockquote":
-                    buffer.append("\n____\n");
-                    break;
-                case "a":
-                    buffer.append("]");
-                    break;
-                case "pre":
-                    buffer.append("\n----\n");
-                    break;
-                case "h1":
-                case "h2":
-                case "h3":
-                case "h4":
-                case "h5":
-                case "h6":
-                    buffer.append("\n");
-                    break;
-                case "ol":
-                case "ul":
-                    listToken = "";
-                    break;
-                case "li":
-                    buffer.append("\n");
-                    break;
+            if (processTokens) {
+                switch (tag.getName().toString().toLowerCase()) {
+                    case "p":
+                        buffer.append("\n");
+                        break;
+                    case "code":
+                        buffer.append("`");
+                        break;
+                    case "b":
+                    case "strong":
+                        buffer.append("*");
+                        break;
+                    case "i":
+                    case "em":
+                        buffer.append("_");
+                        break;
+                    case "del":
+                        buffer.append("#");
+                        break;
+                    case "blockquote":
+                        buffer.append("\n____\n");
+                        break;
+                    case "a":
+                        buffer.append("]");
+                        break;
+                    case "h1":
+                    case "h2":
+                    case "h3":
+                    case "h4":
+                    case "h5":
+                    case "h6":
+                        buffer.append("\n");
+                        break;
+                    case "ol":
+                    case "ul":
+                        listToken = "";
+                        break;
+                    case "li":
+                        buffer.append("\n");
+                        break;
 
+                }
+            } else {
+                switch (tag.getName().toString().toLowerCase()) {
+                    case "pre":
+                        buffer.append("\n----\n");
+                        processTokens = true;
+                        break;
+                    default:
+                        buffer.append(tag);
+                }
             }
         }
     }
